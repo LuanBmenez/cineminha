@@ -1,8 +1,9 @@
-import Principal from "./Components/Footer"
-import Catalogo from "./Components/Catalogo"
-import FilmeSessões from "./Components/FilmeSessões"
-import styled, { createGlobalStyle } from "styled-components"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Principal from "./Components/Header";
+import Catalogo from "./Components/Catalog";
+import FilmeSessões from "./Components/SessionsMovie";
+import Seats from "./Components/Seats"
+import styled, { createGlobalStyle } from "styled-components";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -32,14 +33,15 @@ function App() {
     <BrowserRouter>
       <GlobalStyle />
       <AppContainer>
-        <Principal/>
+        <Principal />
         <Routes>
           <Route path="/" element={<Catalogo />} />
-          <Route path="/sessoes/:filmeId" element={<FilmeSessões />} />
+          <Route path="/sessoes/:idMovie" element={<FilmeSessões />} />
+          <Route path="/assentos/:sessionId" element={<Seats />} />
         </Routes>
       </AppContainer>
     </BrowserRouter>
   );
 }
 
-export default App
+export default App;

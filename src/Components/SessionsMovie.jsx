@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
@@ -60,6 +60,14 @@ const DayCard = styled.div`
   padding: 20px;
 `;
 
+const Sidebar = styled.div`
+  width: 99%;
+  height: 3px;
+  border: 1px solid #4e5a65;
+  background-color: #4e5a65;
+  margin: 15px 0;
+`;
+
 const DayInfo = styled.div`
   color: #ffffff;
   font-size: 18px;
@@ -107,13 +115,6 @@ const BackButton = styled.button`
   }
 `;
 
-const LoadingMessage = styled.div`
-  text-align: center;
-  color: #ffffff;
-  font-size: 18px;
-  padding: 40px;
-`;
-
 const ErrorMessage = styled.div`
   text-align: center;
   color: #ff6b6b;
@@ -122,41 +123,28 @@ const ErrorMessage = styled.div`
 `;
 
 function FilmeSessões() {
-  const { filmeId } = useParams();
+  const { idMovie } = useParams();
   const navigate = useNavigate();
-  const [sessoes, setSessoes] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [sessoes, setSessoes] = useState();
 
   useEffect(() => {
     const buscarSessoes = () => {
-      setLoading(true);
       const promise = axios.get(
-        `https://mock-api.driven.com.br/api/v8/cineflex/movies/${filmeId}/showtimes`
+        `https://mock-api.driven.com.br/api/v8/cineflex/movies/${idMovie}/showtimes`
       );
 
       promise.then((response) => {
         setSessoes(response.data);
-        setLoading(false);
       });
 
       promise.catch((error) => {
-        setError("Erro ao carregar as sessões");
-        setLoading(false);
-        console.log(error.response?.data);
+        console.log("Erro ao buscar sessões:");
+        console.log(error.response.data);
       });
     };
 
     buscarSessoes();
-  }, [filmeId]);
-
-  if (loading) {
-    return <LoadingMessage>Carregando sessões...</LoadingMessage>;
-  }
-
-  if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
-  }
+  }, [idMovie]);
 
   if (!sessoes) {
     return <ErrorMessage>Nenhuma sessão encontrada</ErrorMessage>;
@@ -182,15 +170,12 @@ function FilmeSessões() {
             <DayInfo>
               {day.weekday} - {day.date}
             </DayInfo>
+            <Sidebar />
             <ShowtimesContainer>
               {day.showtimes.map((showtime) => (
                 <ShowtimeButton
                   key={showtime.id}
-                  onClick={() =>
-                    console.log(
-                      `Sessão selecionada: ${day.date} às ${showtime.name}`
-                    )
-                  }
+                  onClick={() => navigate(`/assentos/${showtime.id}`)}
                 >
                   {showtime.name}
                 </ShowtimeButton>
