@@ -76,10 +76,16 @@ const SeatButton = styled.button`
     color: #000;
   }
   
-  &.unavailable {
+  &.selected {
     background-color: #FADBC5;
     border: 2px solid #EE897F;
     color: #000;
+  }
+  
+  &.unavailable {
+    background-color: #2B2D36;
+    border: 1px solid #2B2D36;
+    color: #2B2D36;
     cursor: not-allowed;
   }
 `;
@@ -110,7 +116,7 @@ const Input = styled.input`
 `;
 
 const ReserveButton = styled.button`
-  background-color: #e8833a;
+  background-color: #EE897F;
   color: #ffffff;
   border: none;
   border-radius: 3px;
@@ -120,7 +126,7 @@ const ReserveButton = styled.button`
   margin-top: 20px;
   
   &:hover {
-    background-color: #d67429;
+    background-color: #EE897F;
   }
 `;
 
@@ -165,7 +171,11 @@ function Seats() {
   }
 
 const handleSeatClick = (seat) => {
-  if (!seat.isAvailable && !selectedSeats.includes(seat.id)) {
+  if (!seat.isAvailable) return; 
+  
+  if (selectedSeats.includes(seat.id)) {
+    setSelectedSeats(selectedSeats.filter(id => id !== seat.id));
+  } else {
     setSelectedSeats([...selectedSeats, seat.id]);
   }
 };
@@ -181,7 +191,13 @@ const handleSeatClick = (seat) => {
   {seats.seats.map((seat) => (
     <SeatButton
       key={seat.id}
-      className={seat.isAvailable ? "available" : "unavailable"}
+      className={
+        !seat.isAvailable 
+          ? "unavailable" 
+          : selectedSeats.includes(seat.id)
+          ? "selected"
+          : "available"
+      }
       onClick={() => handleSeatClick(seat)}
     >
       {seat.name}

@@ -125,7 +125,7 @@ const ErrorMessage = styled.div`
 function FilmeSessões() {
   const { idMovie } = useParams();
   const navigate = useNavigate();
-  const [sessoes, setSessoes] = useState();
+  const [session, setSession] = useState();
 
   useEffect(() => {
     const buscarSessoes = () => {
@@ -134,7 +134,7 @@ function FilmeSessões() {
       );
 
       promise.then((response) => {
-        setSessoes(response.data);
+        setSession(response.data);
       });
 
       promise.catch((error) => {
@@ -146,7 +146,7 @@ function FilmeSessões() {
     buscarSessoes();
   }, [idMovie]);
 
-  if (!sessoes) {
+  if (!session) {
     return <ErrorMessage>Nenhuma sessão encontrada</ErrorMessage>;
   }
 
@@ -155,17 +155,17 @@ function FilmeSessões() {
       <BackButton onClick={() => navigate("/")}>← Voltar</BackButton>
 
       <MovieInfo>
-        <MoviePoster src={sessoes.posterURL} alt={sessoes.title} />
+        <MoviePoster src={session.posterURL} alt={session.title} />
         <MovieDetails>
-          <MovieTitle>{sessoes.title}</MovieTitle>
-          <p>{sessoes.overview}</p>
+          <MovieTitle>{session.title}</MovieTitle>
+          <p>{session.overview}</p>
         </MovieDetails>
       </MovieInfo>
 
       <Title>Selecione o horário</Title>
 
       <DaysContainer>
-        {sessoes.days.map((day) => (
+        {session.days.map((day) => (
           <DayCard key={day.id}>
             <DayInfo>
               {day.weekday} - {day.date}
