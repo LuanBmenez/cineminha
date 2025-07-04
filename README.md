@@ -1,12 +1,79 @@
-# React + Vite
+# 🎬 Cineminha - Sistema de Reserva de Assentos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Um sistema simples e intuitivo para reservar assentos de cinema online.
 
-Currently, two official plugins are available:
+## 🎯 Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+O **Cineminha** permite que você:
+- Veja os filmes em cartaz
+- Escolha o dia e horário da sessão
+- Selecione seus assentos favoritos
+- Faça sua reserva de forma rápida
 
-## Expanding the ESLint configuration
+## ✨ Como Funciona
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. 🎭 Escolha seu Filme
+Navegue pelos filmes disponíveis e clique no que mais te interessa.
+
+### 2. 🕐 Selecione a Sessão
+Veja os horários disponíveis e escolha o melhor para você.
+
+### 3. 💺 Reserve seus Assentos
+- **Verde**: Disponível para reserva
+- **Laranja**: Selecionado por você
+- **Preto**: Já ocupado
+
+### 4. ✅ Finalize sua Compra
+Preencha seus dados e confirme a reserva!
+
+## 🚀 Tecnologias
+
+- **React** - Interface do usuário
+- **Styled Components** - Estilização
+- **React Router** - Navegação entre páginas
+- **Axios** - Comunicação com a API
+
+## � Como Rodar o Projeto
+
+1. **Baixe o projeto**
+   ```bash
+   git clone https://github.com/seu-usuario/cineminha.git
+   cd cineminha
+   ```
+
+2. **Instale as dependências**
+   ```bash
+   npm install
+   ```
+
+3. **Execute o projeto**
+   ```bash
+   npm run dev
+   ```
+
+4. **Abra no navegador**
+   ```
+   http://localhost:5173
+   ```
+
+## 📁 Estrutura
+
+```
+src/
+├── Components/
+│   ├── Catalog.jsx      # Lista de filmes
+│   ├── SessionsMovie.jsx # Horários das sessões
+│   ├── Seats.jsx        # Seleção de assentos
+│   └── Final.jsx        # Confirmação da reserva
+└── App.jsx              # Configuração principal
+```
+
+## 🎨 Design
+
+O projeto usa cores modernas e interface limpa:
+- Fundo escuro para melhor experiência visual
+- Cores laranja para destaques
+- Layout responsivo e intuitivo
+
+---
+

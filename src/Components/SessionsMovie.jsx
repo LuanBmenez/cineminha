@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { BackButton } from "./Buttons";
 
 const Container = styled.div`
   padding: 20px;
@@ -95,23 +96,6 @@ const ShowtimeButton = styled.button`
   &:hover {
     background-color: #e67c70;
     transform: scale(1.05);
-  }
-`;
-
-const BackButton = styled.button`
-  background-color: #ee897f;
-  font-family: "Sarala", sans-serif;
-  color: #ffffff;
-  border: none;
-  border-radius: 3px;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #2f5233;
   }
 `;
 

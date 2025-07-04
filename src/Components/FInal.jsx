@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { EnterButton } from "./Buttons";
 
 const Container = styled.div`
   padding: 20px;
@@ -48,24 +49,6 @@ const InfoText = styled.p`
   font-weight: 400;
 `;
 
-const BackToHomeButton = styled.button`
-  background-color: #EE897F;
-  color: #2B2D36;
-  border: none;
-  border-radius: 3px;
-  padding: 14px;
-  font-size: 18px;
-  font-weight: 400;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 40px;
-  font-family: "Sarala", sans-serif;
-  
-  &:hover {
-    background-color: #e67c70;
-  }
-`;
-
 function Final() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -106,9 +89,9 @@ function Final() {
         </InfoSection>
       </InfoBox>
       
-      <BackToHomeButton onClick={() => navigate('/')}>
+      <EnterButton onClick={() => navigate('/')}>
         Voltar para tela inicial
-      </BackToHomeButton>
+      </EnterButton>
     </Container>
   );
 }

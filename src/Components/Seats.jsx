@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { BackButton, EnterButton } from "./Buttons";
 
 const Container = styled.div`
   padding: 20px;
@@ -17,23 +18,6 @@ const Title = styled.h2`
   font-family: "Sarala", sans-serif;
   font-size: 24px;
   margin-bottom: 30px;
-`;
-
-const BackButton = styled.button`
-  background-color: #ee897f;
-  font-family: "Sarala", sans-serif;
-  color: #ffffff;
-  border: none;
-  border-radius: 3px;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #e67c70;
-  }
 `;
 
 const SeatsGrid = styled.div`
@@ -115,21 +99,6 @@ const Input = styled.input`
   border: 1px solid #FFFFFF;
   border-radius: 3px;
   font-size: 18px;
-`;
-
-const ReserveButton = styled.button`
-  background-color: #EE897F;
-  color: #FFFFFF;
-  border: none;
-  border-radius: 3px;
-  padding: 14px;
-  font-size: 18px;
-  cursor: pointer;
-  margin-top: 20px;
-  
-  &:hover {
-    background-color: #EE897F;
-  }
 `;
 
 function Seats() {
@@ -293,9 +262,9 @@ function Seats() {
           />
         </InputContainer>
         
-        <ReserveButton onClick={handleReservation}>
+        <EnterButton onClick={handleReservation}>
           Reservar assento(s)
-        </ReserveButton>
+        </EnterButton>
       </FormSection>
       
       <Sidebar />
