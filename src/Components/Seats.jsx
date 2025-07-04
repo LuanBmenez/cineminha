@@ -35,6 +35,7 @@ const BackButton = styled.button`
     background-color: #e67c70;
   }
 `;
+
 const SeatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -89,6 +90,7 @@ const SeatButton = styled.button`
     cursor: not-allowed;
   }
 `;
+
 const FormSection = styled.div`
   margin-top: 40px;
   display: flex;
@@ -103,21 +105,21 @@ const InputContainer = styled.div`
 `;
 
 const Label = styled.label`
-  color: #293845;
+  color: #FFFFFF;
   font-size: 18px;
   font-family: "Roboto", sans-serif;
 `;
 
 const Input = styled.input`
   padding: 15px;
-  border: 1px solid #d5d5d5;
+  border: 1px solid #FFFFFF;
   border-radius: 3px;
   font-size: 18px;
 `;
 
 const ReserveButton = styled.button`
   background-color: #EE897F;
-  color: #ffffff;
+  color: #FFFFFF;
   border: none;
   border-radius: 3px;
   padding: 14px;
@@ -134,7 +136,6 @@ function Seats() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const [seats, setSeats] = useState([]);
-  const [error, setError] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [buyerName, setBuyerName] = useState("");
   const [buyerCPF, setBuyerCPF] = useState("");
@@ -150,35 +151,102 @@ function Seats() {
       });
 
       promise.catch((error) => {
-        setError("Erro ao carregar os assentos");
         console.log("Erro ao buscar assentos:");
         console.log(error.response?.data);
       });
     };
-
-    if (sessionId) {
-      buscarAssentos();
-    }
+    buscarAssentos();
   }, [sessionId]);
-
-
-  if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
-  }
 
   if (!seats || !seats.seats) {
     return <ErrorMessage>Carregando assentos...</ErrorMessage>;
   }
 
-const handleSeatClick = (seat) => {
-  if (!seat.isAvailable) return; 
+  const handleSeatClick = (seat) => {
+    if (!seat.isAvailable) return; 
+    
+    if (selectedSeats.includes(seat.id)) {
+      setSelectedSeats(selectedSeats.filter(id => id !== seat.id));
+    } else {
+      setSelectedSeats([...selectedSeats, seat.id]);
+    }
+  };
+
+  const handleReservation = () => {
+    // Validações
+    if (selectedSeats.length === 0) {
+      alert("Por favor, selecione pelo menos um assento!");
+      return;
+    }
+    
+    if (!buyerName.trim()) {
+      alert("Por favor, digite o nome do comprador!");
+      return;
+    }
+    
+    if (!buyerCPF.trim()) {
+      alert("Por favor, digite o CPF do comprador!");
+      return;
+    }
+
+    
+    const CPFNumbers = buyerCPF.replace(/[^0-9]/g, '');
+    if (CPFNumbers.length !== 11) {
+      alert("CPF deve ter exatamente 11 números!");
+      return;
+    }
+
+    
+    const reservationData = {
+      ids: selectedSeats,
+      name: buyerName,
+      cpf: CPFNumbers 
+    };
+
+    
+    const promise = axios.post(
+      'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many',
+      reservationData
+    );
+
+    promise.then((response) => {
+      console.log("Reserva realizada com sucesso:", response.data);
+      
   
-  if (selectedSeats.includes(seat.id)) {
-    setSelectedSeats(selectedSeats.filter(id => id !== seat.id));
-  } else {
-    setSelectedSeats([...selectedSeats, seat.id]);
-  }
-};
+      const selectedSeatNames = seats.seats
+        .filter(seat => selectedSeats.includes(seat.id))
+        .map(seat => seat.name);
+
+     
+      const orderData = {
+        movieTitle: seats.movie.title,
+        weekday: seats.day.weekday,
+        date: seats.day.date,
+        time: seats.name,
+        seats: selectedSeatNames,
+        buyerName: buyerName,
+        buyerCPF: buyerCPF
+      };
+
+      // Navega para a tela final enviando os dados via URL
+      const params = new URLSearchParams({
+        movieTitle: orderData.movieTitle,
+        weekday: orderData.weekday,
+        date: orderData.date,
+        time: orderData.time,
+        seats: orderData.seats.join(','),
+        buyerName: orderData.buyerName,
+        buyerCPF: orderData.buyerCPF
+      });
+      
+      navigate(`/sucesso?${params.toString()}`);
+    });
+
+    promise.catch((error) => {
+      console.error("Erro ao realizar reserva:", error.response?.data);
+      alert("Erro ao realizar a reserva. Tente novamente!");
+    });
+  };
 
   return (
     <Container>
@@ -187,42 +255,49 @@ const handleSeatClick = (seat) => {
       </BackButton>
 
       <Title>Selecione o(s) assento(s)</Title>
-<SeatsGrid>
-  {seats.seats.map((seat) => (
-    <SeatButton
-      key={seat.id}
-      className={
-        !seat.isAvailable 
-          ? "unavailable" 
-          : selectedSeats.includes(seat.id)
-          ? "selected"
-          : "available"
-      }
-      onClick={() => handleSeatClick(seat)}
-    >
-      {seat.name}
-    </SeatButton>
-  ))}
-</SeatsGrid>
-<FormSection>
-  <InputContainer>
-  <Label>Nome do comprador(a)</Label>
-  <Input 
-  placeholder="Digite seu nome"
-  value={buyerName}
-  onChange={(e) => setBuyerName(e.target.value)}/>
-  </InputContainer>
-  <InputContainer>
-  <Label>CPF do comprador(a)</Label>
-  <Input 
-  placeholder="Digite seu CPF"
-  value={buyerCPF}
-  onChange={(e) => setBuyerCPF(e.target.value)}/>
-  </InputContainer>
-   <ReserveButton>
-    Reservar assento(s)
-  </ReserveButton>
-</FormSection>
+      
+      <SeatsGrid>
+        {seats.seats.map((seat) => (
+          <SeatButton
+            key={seat.id}
+            className={
+              !seat.isAvailable 
+                ? "unavailable" 
+                : selectedSeats.includes(seat.id)
+                ? "selected"
+                : "available"
+            }
+            onClick={() => handleSeatClick(seat)}
+          >
+            {seat.name}
+          </SeatButton>
+        ))}
+      </SeatsGrid>
+      
+      <FormSection>
+        <InputContainer>
+          <Label>Nome do comprador(a)</Label>
+          <Input 
+            placeholder="Digite seu nome"
+            value={buyerName}
+            onChange={(e) => setBuyerName(e.target.value)}
+          />
+        </InputContainer>
+        
+        <InputContainer>
+          <Label>CPF do comprador(a)</Label>
+          <Input 
+            placeholder="Digite seu CPF"
+            value={buyerCPF}
+            onChange={(e) => setBuyerCPF(e.target.value)}
+          />
+        </InputContainer>
+        
+        <ReserveButton onClick={handleReservation}>
+          Reservar assento(s)
+        </ReserveButton>
+      </FormSection>
+      
       <Sidebar />
     </Container>
   );

@@ -1,7 +1,8 @@
 import Principal from "./Components/Header";
 import Catalogo from "./Components/Catalog";
 import FilmeSessões from "./Components/SessionsMovie";
-import Seats from "./Components/Seats"
+import Seats from "./Components/Seats";
+import Final from "./Components/FInal";
 import styled, { createGlobalStyle } from "styled-components";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -38,6 +39,7 @@ function App() {
           <Route path="/" element={<Catalogo />} />
           <Route path="/sessoes/:idMovie" element={<FilmeSessões />} />
           <Route path="/assentos/:sessionId" element={<Seats />} />
+          <Route path="/sucesso" element={<Final />} />
         </Routes>
       </AppContainer>
     </BrowserRouter>
