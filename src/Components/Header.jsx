@@ -41,7 +41,7 @@ const HeaderLink = styled(Link)`
   }
 `;
 
-const Principal = () => {
+const Header = () => {
   return (
     <Container>
       <HeaderLink to="/">
@@ -52,4 +52,4 @@ const Principal = () => {
   );
 };
 
-export default Principal;
+export default Header;

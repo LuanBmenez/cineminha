@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-
 export const BackButton = styled.button`
   background-color: #ee897f;
   font-family: "Sarala", sans-serif;

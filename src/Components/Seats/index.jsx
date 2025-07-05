@@ -1,105 +1,8 @@
 import { useState, useEffect } from "react";
-import styled from "styled-components";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { BackButton, EnterButton } from "./Buttons";
-
-const Container = styled.div`
-  padding: 20px;
-  background-color: #212226;
-  width: 100%;
-  min-height: calc(100vh - 67px);
-  box-sizing: border-box;
-`;
-
-const Title = styled.h2`
-  text-align: center;
-  color: #ffffff;
-  font-family: "Sarala", sans-serif;
-  font-size: 24px;
-  margin-bottom: 30px;
-`;
-
-const SeatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 15px;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  justify-items: center;
-`;
-
-const Sidebar = styled.div`
-  width: 99%;
-  height: 3px;
-  border: 1px solid #4e5a65;
-  background-color: #4e5a65;
-  margin: 15px 0;
-`;
-
-const ErrorMessage = styled.div`
-  text-align: center;
-  color: #ff6b6b;
-  font-size: 18px;
-  padding: 40px;
-`;
-
-const SeatButton = styled.button`
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  font-size: 11px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &.available {
-    background-color: #9DB899;
-    border: 1px solid #808F9D;
-    color: #000;
-  }
-  
-  &.selected {
-    background-color: #FADBC5;
-    border: 2px solid #EE897F;
-    color: #000;
-  }
-  
-  &.unavailable {
-    background-color: #2B2D36;
-    border: 1px solid #2B2D36;
-    color: #2B2D36;
-    cursor: not-allowed;
-  }
-`;
-
-const FormSection = styled.div`
-  margin-top: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  color: #FFFFFF;
-  font-size: 18px;
-  font-family: "Roboto", sans-serif;
-`;
-
-const Input = styled.input`
-  padding: 15px;
-  border: 1px solid #FFFFFF;
-  border-radius: 3px;
-  font-size: 18px;
-`;
+import { Container, ErrorMessage, FormSection, Input, InputContainer, Label, SeatButton, SeatsGrid, Sidebar, Title } from "./styles";
+import { BackButton, EnterButton } from "../Buttons";
 
 function Seats() {
   const { sessionId } = useParams();
@@ -108,27 +11,33 @@ function Seats() {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [buyerName, setBuyerName] = useState("");
   const [buyerCPF, setBuyerCPF] = useState("");
+  const [loading, setLoading] = useState();
 
   useEffect(() => {
-    const buscarAssentos = () => {
-      const promise = axios.get(
-        `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${sessionId}/seats`
-      );
-
-      promise.then((response) => {
-        setSeats(response.data);
-      });
-
-      promise.catch((error) => {
-        console.log("Erro ao buscar assentos:");
-        console.log(error.response?.data);
-      });
+    const buscarAssentos = async() => {
+      try{
+        setLoading(true);
+        const {data} = await axios.get(
+          `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${sessionId}/seats`
+        );
+        
+        setSeats(data);
+      }catch(error){
+        console.log(`Erro ao buscar assentos: ${error.response?.data || error.message}`);
+      }
+      finally {
+        setLoading(false);
+      }
     };
     buscarAssentos();
   }, [sessionId]);
 
-  if (!seats || !seats.seats) {
+  if (loading) {
     return <ErrorMessage>Carregando assentos...</ErrorMessage>;
+  }
+  
+  if (!seats || !seats.seats) {
+    return <ErrorMessage>Sessão não encontrada ou erro ao carregar assentos.</ErrorMessage>;
   }
 
   const handleSeatClick = (seat) => {
@@ -142,7 +51,6 @@ function Seats() {
   };
 
   const handleReservation = () => {
-    // Validações
     if (selectedSeats.length === 0) {
       alert("Por favor, selecione pelo menos um assento!");
       return;
@@ -157,7 +65,6 @@ function Seats() {
       alert("Por favor, digite o CPF do comprador!");
       return;
     }
-
     
     const CPFNumbers = buyerCPF.replace(/[^0-9]/g, '');
     if (CPFNumbers.length !== 11) {
@@ -165,13 +72,11 @@ function Seats() {
       return;
     }
 
-    
     const reservationData = {
       ids: selectedSeats,
       name: buyerName,
       cpf: CPFNumbers 
     };
-
     
     const promise = axios.post(
       'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many',
@@ -180,12 +85,10 @@ function Seats() {
 
     promise.then((response) => {
       console.log("Reserva realizada com sucesso:", response.data);
-      
-  
+
       const selectedSeatNames = seats.seats
         .filter(seat => selectedSeats.includes(seat.id))
         .map(seat => seat.name);
-
      
       const orderData = {
         movieTitle: seats.movie.title,
@@ -197,18 +100,8 @@ function Seats() {
         buyerCPF: buyerCPF
       };
 
-      // Navega para a tela final enviando os dados via URL
-      const params = new URLSearchParams({
-        movieTitle: orderData.movieTitle,
-        weekday: orderData.weekday,
-        date: orderData.date,
-        time: orderData.time,
-        seats: orderData.seats.join(','),
-        buyerName: orderData.buyerName,
-        buyerCPF: orderData.buyerCPF
-      });
-      
-      navigate(`/sucesso?${params.toString()}`);
+      // Enviando dados via state em vez de URL para não expor CPF
+      navigate('/sucesso', { state: orderData });
     });
 
     promise.catch((error) => {
@@ -226,7 +119,7 @@ function Seats() {
       <Title>Selecione o(s) assento(s)</Title>
       
       <SeatsGrid>
-        {seats.seats.map((seat) => (
+        {seats.seats?.map((seat) => (
           <SeatButton
             key={seat.id}
             className={
@@ -259,6 +152,7 @@ function Seats() {
             placeholder="Digite seu CPF"
             value={buyerCPF}
             onChange={(e) => setBuyerCPF(e.target.value)}
+            maxLength={11}
           />
         </InputContainer>
         
@@ -273,5 +167,3 @@ function Seats() {
 }
 
 export default Seats;
-
-

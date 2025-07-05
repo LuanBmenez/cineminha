@@ -1,32 +1,15 @@
-import Principal from "./Components/Header";
-import Catalogo from "./Components/Catalog";
-import FilmeSessões from "./Components/SessionsMovie";
-import Seats from "./Components/Seats";
-import Final from "./Components/FInal";
-import styled, { createGlobalStyle } from "styled-components";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body, html {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-`;
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
+import Catalog from "./Components/Catalog/index.jsx";
+import Final from "./Components/Final/index.jsx";
+import Header from "./Components/Header";
+import SessionsMovie from "./Components/SessionsMovie/index.jsx";
+import Seats from "./Components/Seats/index.jsx";
+import GlobalStyle from "./styles/global.jsx";
 
 const AppContainer = styled.div`
-  margin: 0;
-  padding: 0;
   width: 100%;
   min-height: 100vh;
-  box-sizing: border-box;
 `;
 
 function App() {
@@ -34,10 +17,10 @@ function App() {
     <BrowserRouter>
       <GlobalStyle />
       <AppContainer>
-        <Principal />
+        <Header />
         <Routes>
-          <Route path="/" element={<Catalogo />} />
-          <Route path="/sessoes/:idMovie" element={<FilmeSessões />} />
+          <Route path="/" element={<Catalog />} />
+          <Route path="/sessoes/:idMovie" element={<SessionsMovie />} />
           <Route path="/assentos/:sessionId" element={<Seats />} />
           <Route path="/sucesso" element={<Final />} />
         </Routes>
